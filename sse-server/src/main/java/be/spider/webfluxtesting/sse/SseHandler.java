@@ -13,10 +13,16 @@ import java.time.Duration;
 
 @Component
 public class SseHandler {
-    public Mono<ServerResponse> produceEvents(ServerRequest request) {
+    public Mono<ServerResponse> produceSseEvents(ServerRequest request) {
         Flux<ServerSentEvent<String>> sseFlux = Flux.interval(Duration.ofSeconds(1))
-                .map(sequence -> ServerSentEvent.builder("Flux - " + sequence).event("newsse").id(sequence.toString()).build());
+                .map(sequence -> ServerSentEvent.builder("Flux - " + sequence).id(sequence.toString()).build());
         return ServerResponse.ok().cacheControl(CacheControl.noCache()).body(BodyInserters.fromServerSentEvents(sseFlux));
+    }
+
+    public Mono<ServerResponse> produceEvents(ServerRequest request) {
+        Flux<String> stringFlux = Flux.interval(Duration.ofSeconds(1))
+                .map(Object::toString);
+        return ServerResponse.ok().cacheControl(CacheControl.noCache()).body(stringFlux, String.class);
     }
 
 }

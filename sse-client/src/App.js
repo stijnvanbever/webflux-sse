@@ -12,7 +12,9 @@ class App extends Component {
     }
 
     componentDidMount() {
-        this.eventSource = new EventSource("http://localhost:8080/stream-sse2");
+        this.eventSource = new EventSource("http://localhost:8080/routerfunction/flux-sse");
+        this.eventSource.onopen = msg => console.log("open:", msg);
+        this.eventSource.onerror = msg => console.log("error:", msg);
         this.eventSource.onmessage = e => {
             console.log(e);
             this.updateEvents(e.data);
